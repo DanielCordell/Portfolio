@@ -36,7 +36,7 @@ class Background extends React.Component {
 
   getRandomBetween = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 
-  getRandomPosNeg = () => this.getRandomBetween(0, 1) == 0 ? -1 : 1;
+  getRandomPosNeg = () => this.getRandomBetween(0, 1) === 0 ? -1 : 1;
 
   initCircles = () => {
     const count = this.getRandomBetween(4, 8);
@@ -44,7 +44,6 @@ class Background extends React.Component {
     // Generate 4-8 random circles
     for (let i = 0; i < count; ++i) {
       const radius = this.getRandomBetween(2, 15) * this.state.width / 150;
-      console.log(radius);
       this.circles.push({
         radius: radius,
         x: this.getRandomBetween(radius, this.state.width - radius),
