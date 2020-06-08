@@ -58,7 +58,7 @@ class Background extends React.Component {
   draw = () => {
     if (!this.canvasRef.current) return;
     const ctx = this.canvasRef.current.getContext('2d');
-    ctx.clearRect(0, 0, this.state.width, this.state.height);
+    ctx.clearRect(0, 0, this.state.width * 4, this.state.height * 4);
 
     // Draw circles
     this.circles.forEach(circle => {
@@ -95,11 +95,12 @@ class Background extends React.Component {
     // Draw points
     for (let x = 0; x <= this.state.width; x += 8) {
       for (let y = 0; y <= this.state.height; y += 8) {
-        if (this.getMetaballVal(x, y) >= 1) {
-          ctx.beginPath();
-          ctx.rect(x-2, y-2, 4, 4);
-          ctx.fill();
-        }
+        let marchingBinary = ((this.getMetaballVal(x - 0.5, y + 0.5) >= 1) && 0b0001)
+          + ((this.getMetaballVal(x + 0.5, y + 0.5) >= 1) && 0b0010)
+          + ((this.getMetaballVal(x + 0.5, y - 0.5) >= 1) && 0b0100)
+          + ((this.getMetaballVal(x - 0.5, y - 0.5) >= 1) && 0b1000);
+        
+        this.drawCell(ctx, x, y, marchingBinary);
       }
     }
   }
@@ -110,18 +111,49 @@ class Background extends React.Component {
     }).reduce((a, b) => a + b, 0);
   }
 
+  drawCell = (ctx, x, y, marchingBinary) => {
+    let coords = []
+    switch (marchingBinary) {
+      case 1: coords = [{x: x-2, y}, {x, y: y+2}, {x: x-2, y: y+2}]; break;
+      case 2: coords = [{x: x+2, y}, {x, y: y+2}, {x: x+2, y: y+2}]; break;
+      case 3: coords = [{x: x-2, y}, {x: x+2, y}, {x: x+2, y: y+2}, {x: x-2, y: y+2}]; break;
+      case 4: coords = [{x: x+2, y}, {x, y: y-2}, {x: x+2, y: y-2}]; break;
+      case 5: coords = [{x: x-2, y: y+2}, {x: x-2, y}, {x, y: y-2}, {x: x+2, y: y-2}, {x: x+2, y}, {x, y: y+2}]; break;
+      case 6: coords = [{x: x+2, y: y+2}, {x, y: y+2}, {x, y: y-2}, {x: x+2, y: y-2}]; break;
+      case 7: coords = [{x: x-2, y: y+2}, {x, y: y+2}, {x, y: y-2}, {x: x+2, y: y-2}, {x: x+2, y: y+2}]; break;
+      case 8: coords = [{x: x-2, y: y-2}, {x, y: y-2}, {x: x-2, y}]; break;
+      case 9: coords = [{x: x-2, y: y+2}, {x, y: y+2}, {x, y: y-2}, {x: x-2, y: y-2}]; break;
+      case 10: coords = [{x: x+2, y: y+2}, {x: x+2, y}, {x, y: y-2}, {x: x-2, y: y-2}, {x: x-2, y}, {x, y: y+2}]; break;
+      case 11: coords = [{x: x+2, y: y+2}, {x, y: y+2}, {x, y: y-2}, {x: x-2, y: y-2}, {x: x-2, y: y+2}]; break;
+      case 12: coords = [{x: x-2, y}, {x: x+2, y}, {x: x+2, y: y-2}, {x: x-2, y: y-2}]; break;
+      case 13: coords = [{x: x+2, y: y-2}, {x, y: y-2}, {x, y: y+2}, {x: x-2, y: y+2}, {x: x-2, y: y-2}]; break;
+      case 14: coords = [{x: x-2, y: y-2}, {x, y: y-2}, {x, y: y+2}, {x: x+2, y: y+2}, {x: x+2, y: y-2}]; break;
+      case 15: coords = [{x: x-2, y: y-2}, {x: x+2, y: y-2}, {x: x+2, y: y+2}, {x: x-2, y: y+2}]; break;
+      default: break;
+    }
+    if (coords.length == 0) return;
+
+    ctx.beginPath();
+    ctx.moveTo(coords[0].x * 4, coords[0].y * 4);
+    for (let i = 1; i < coords.length; ++i) {
+      ctx.lineTo(coords[i].x * 4, coords[i].y * 4);
+    }
+    ctx.closePath();
+    ctx.fill();
+  }
+
   render() {
     if (this.canvasRef.current) {
-      this.canvasRef.current.width = this.state.width;
-      this.canvasRef.current.height = this.state.height;
+      this.canvasRef.current.width = this.state.width * 4;
+      this.canvasRef.current.height = this.state.height * 4;
     }
 
     return (
       <canvas
-        style={{ position: "fixed", zIndex: -1 }}
+        style={{ position: "fixed", zIndex: -1, width: window.innerWidth + "px", height: window.innerHeight + "px" }}
         ref={this.canvasRef}
-        width={window.innerWidth}
-        height={window.innerHeight}
+        width={window.innerWidth * 4}
+        height={window.innerHeight * 4}
       />
     );
   }
