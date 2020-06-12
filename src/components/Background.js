@@ -11,6 +11,8 @@ class Background extends React.Component {
 
   INTERVAL_MILLIS = 15;
 
+  MULTIPLIER = 2
+
   constructor(props) {
     super(props);
     window.addEventListener('resize', this.windowResize);
@@ -58,7 +60,7 @@ class Background extends React.Component {
   draw = () => {
     if (!this.canvasRef.current) return;
     const ctx = this.canvasRef.current.getContext('2d');
-    ctx.clearRect(0, 0, this.state.width * 4, this.state.height * 4);
+    ctx.clearRect(0, 0, this.state.width * this.MULTIPLIER, this.state.height * this.MULTIPLIER);
 
     // Draw circles
     this.circles.forEach(circle => {
@@ -106,9 +108,19 @@ class Background extends React.Component {
   }
 
   getMetaballVal = (x, y) => {
+    return this.calculateDataForEachCircle(x, y).reduce((a, b) => a + b.val, 0);
+  }
+
+  getMetaballColor = (x, y) => {
+    return this.calculateDataForEachCircle(x, y)
+      .filter(it => it.val >= 1)
+      .reduce((a, b) => a + b, {r: 0, b: 0, g: 0});
+  }
+
+  calculateDataForEachCircle = (x, y) => {
     return this.circles.map(circle => {
-      return (circle.radius * circle.radius) / (Math.pow(x - circle.x, 2) + Math.pow(y - circle.y, 2))
-    }).reduce((a, b) => a + b, 0);
+      return { val: (circle.radius * circle.radius) / (Math.pow(x - circle.x, 2) + Math.pow(y - circle.y, 2)), color: circle.color };
+    });
   }
 
   drawCell = (ctx, x, y, marchingBinary) => {
@@ -134,9 +146,9 @@ class Background extends React.Component {
     if (coords.length == 0) return;
 
     ctx.beginPath();
-    ctx.moveTo(coords[0].x * 4, coords[0].y * 4);
+    ctx.moveTo(coords[0].x * this.MULTIPLIER, coords[0].y * this.MULTIPLIER);
     for (let i = 1; i < coords.length; ++i) {
-      ctx.lineTo(coords[i].x * 4, coords[i].y * 4);
+      ctx.lineTo(coords[i].x * this.MULTIPLIER, coords[i].y * this.MULTIPLIER);
     }
     ctx.closePath();
     ctx.fill();
@@ -144,16 +156,16 @@ class Background extends React.Component {
 
   render() {
     if (this.canvasRef.current) {
-      this.canvasRef.current.width = this.state.width * 4;
-      this.canvasRef.current.height = this.state.height * 4;
+      this.canvasRef.current.width = this.state.width * this.MULTIPLIER;
+      this.canvasRef.current.height = this.state.height * this.MULTIPLIER;
     }
 
     return (
       <canvas
         style={{ position: "fixed", zIndex: -1, width: window.innerWidth + "px", height: window.innerHeight + "px" }}
         ref={this.canvasRef}
-        width={window.innerWidth * 4}
-        height={window.innerHeight * 4}
+        width={window.innerWidth * this.MULTIPLIER}
+        height={window.innerHeight * this.MULTIPLIER}
       />
     );
   }
