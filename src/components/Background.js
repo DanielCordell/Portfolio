@@ -13,6 +13,12 @@ class Background extends React.Component {
 
   MULTIPLIER = 2
 
+  GRID = null;
+
+  COLOURS = [
+    [251, 180, 174], [179, 205, 227], [204, 239, 197], [222, 203, 228], [254, 217, 166], [255, 242, 174], [229, 216, 189], [253, 218, 236]
+  ]
+
   constructor(props) {
     super(props);
     window.addEventListener('resize', this.windowResize);
@@ -20,13 +26,31 @@ class Background extends React.Component {
 
     this.initCircles();
     this.interval = setInterval(this.draw, this.INTERVAL_MILLIS);
+    this.setupGrid();
+
+    for(let i = this.COLOURS.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * i)
+      const temp = this.COLOURS[i]
+      this.COLOURS[i] = this.COLOURS[j]
+      this.COLOURS[j] = temp
+    }
+    
   }
 
   windowResize = () => {
     if (this.canvasRef.current) {
       this.setState({ width: window.innerWidth, height: window.innerHeight });
+      this.setupGrid();
     }
   };
+
+  setupGrid = () => {
+    this.grid = new Array(Math.floor(this.state.height / 8));
+    for (var i = 0; i < this.grid.length; ++i) {
+      this.grid[i] = new Array(Math.floor(this.state.width / 8));
+      this.grid[i].fill([]);
+    }
+  }
 
   componentDidMount() {
     this.draw();
@@ -41,16 +65,15 @@ class Background extends React.Component {
   getRandomPosNeg = () => this.getRandomBetween(0, 1) === 0 ? -1 : 1;
 
   initCircles = () => {
-    const count = this.getRandomBetween(4, 8);
-    const colours = distinctColors({ count });
+    const count = this.getRandomBetween(5, 8);
     // Generate 4-8 random circles
     for (let i = 0; i < count; ++i) {
-      const radius = this.getRandomBetween(2, 15) * this.state.width / 150;
+      const radius = this.getRandomBetween(7, 18) * this.state.width / 150;
       this.circles.push({
         radius: radius,
         x: this.getRandomBetween(radius, this.state.width - radius),
         y: this.getRandomBetween(radius + 56, this.state.height - radius), // height of navbar
-        color: colours[i],
+        color: this.COLOURS[i],
         velX: this.getRandomBetween(10, 100) * this.getRandomPosNeg(),
         velY: this.getRandomBetween(10, 100) * this.getRandomPosNeg(),
       });
@@ -61,6 +84,9 @@ class Background extends React.Component {
     if (!this.canvasRef.current) return;
     const ctx = this.canvasRef.current.getContext('2d');
     ctx.clearRect(0, 0, this.state.width * this.MULTIPLIER, this.state.height * this.MULTIPLIER);
+
+    // Setup colours
+
 
     // Draw circles
     this.circles.forEach(circle => {
@@ -97,74 +123,49 @@ class Background extends React.Component {
     // Draw points
     for (let x = 0; x <= this.state.width; x += 8) {
       for (let y = 0; y <= this.state.height; y += 8) {
-        let marchingBinary = this.calculateMarching(x, y);
+        const metaballData = this.getMetaballData(x, y);
+        const marchingBinary = this.calculateMarching(x, y);
         
-        this.drawCell(ctx, x, y, marchingBinary);
+        this.drawCell(ctx, x, y, metaballData, marchingBinary);
       }
     }
   }
 
-  getMetaballVal = (x, y) => {
-    return this.getDataForAllCirclesAtPosition(x, y).reduce((a, b) => a + b.val, 0);
-  }
-
-  getMetaballColor = (x, y) => {
-      // Get all circles overlapping
-    var circleData = this.getDataForAllCirclesAtPosition(x, y);
-
-    // If no circles overlap get the closest (literally an edge-case).
-    if (circleData.length == 0) {
-      var closestDistance = Infinity;
-      var closestColor = [255,255,255];
-      circleData.forEach(it => {
-        if (closestDistance > it.distanceToMid) {
-          closestDistance = it.distanceToMid;
-          closestColor = it.color._rgb.slice(0, 3);
-        }
-      });
-      return closestColor;
+  getMetaballColor = (metaballData) => {
+    // If no circles, set default color.
+    if (metaballData.data.length == 0) {
+      return [255,255,255];
     }
     // If only one circle just return that colour, no averaging
-    else if (circleData.length == 1) {
-      return circleData[0].color._rgb.slice(0, 3);
+    else if (metaballData.data.length == 1) {
+      return metaballData.data[0].color;
     }
 
     // This is factoring in other circles and dulling out other colours
     // Filtering doesn't work, will try switching this with a (2d array of colour arrays that all get flattened/avgd when drawn.)
-    const totalWeight = circleData.map(it => 1/it.distanceToMid).reduce((a, b) => a + b, 0);
+    const totalWeight = metaballData.totalVal;
   
-    const abcd = circleData.reduce((a, b) =>  [
-      (a[0] + Math.pow(b.color._rgb[0] * (1/b.distanceToMid), 2)), 
-      (a[1] + Math.pow(b.color._rgb[1] * (1/b.distanceToMid), 2)),
-      (a[2] + Math.pow(b.color._rgb[2] * (1/b.distanceToMid), 2)),
+    const abcd = metaballData.data.reduce((a, b) =>  [
+      (a[0] + Math.pow(b.color[0], 2) * (b.val / totalWeight)), 
+      (a[1] + Math.pow(b.color[1], 2) * (b.val / totalWeight)),
+      (a[2] + Math.pow(b.color[2], 2) * (b.val / totalWeight)),
     ], [0, 0, 0]);
-      return abcd.map(it => Math.round(Math.sqrt(it) / totalWeight));
-
-      /*
-
-    var color = 0;
-    var maxVal = 0;
-    this.getDataForAllCirclesAtPosition(x, y).forEach(it => {
-      if (it.val > maxVal) {
-        color = it.color._rgb;
-        maxVal = it.val;
-      }
-    });
-    return color;
-    */
+      return abcd.map(it => Math.round(Math.sqrt(it)));
   }
 
-  getDataForAllCirclesAtPosition = (x, y) => {
-    return this.circles.map(circle => {
+  getMetaballData = (x, y) => {
+    const data = this.circles.map(circle => {
       return { 
         val: (circle.radius * circle.radius) / (Math.pow(x - circle.x, 2) + Math.pow(y - circle.y, 2)), 
         color: circle.color, 
         distanceToMid: Math.sqrt(Math.pow(x - circle.x, 2) + Math.pow(y - circle.y, 2)),
       };
     });
+
+    return {data, totalVal: data.reduce((a, b) => a + b.val, 0)};
   }
 
-  drawCell = (ctx, x, y, marchingBinary) => {
+  drawCell = (ctx, x, y, metaballData, marchingBinary) => {
     let coords = []
     switch (marchingBinary) {
       case 1: coords = [{x: x-3, y}, {x, y: y+3}, {x: x-3, y: y+3}]; break;
@@ -186,8 +187,7 @@ class Background extends React.Component {
     }
     if (coords.length == 0) return;
 
-        // So none of this i right, colours needs to weigh up all the colours together. Weighted average!
-    const colors = this.getMetaballColor(x, y);
+    const colors = this.getMetaballColor(metaballData);
     ctx.beginPath();
     ctx.fillStyle = "#" + colors.map(x => {
       const hex = Math.floor(x).toString(16);
@@ -202,10 +202,10 @@ class Background extends React.Component {
   }
 
   calculateMarching(x, y) {
-    return ((this.getMetaballVal(x - 0.5, y + 0.5) >= 1) && 0b0001)
-      + ((this.getMetaballVal(x + 0.5, y + 0.5) >= 1) && 0b0010)
-      + ((this.getMetaballVal(x + 0.5, y - 0.5) >= 1) && 0b0100)
-      + ((this.getMetaballVal(x - 0.5, y - 0.5) >= 1) && 0b1000);
+    return ((this.getMetaballData(x - 0.5, y + 0.5).totalVal >= 1) && 0b0001)
+      + ((this.getMetaballData(x + 0.5, y + 0.5).totalVal >= 1) && 0b0010)
+      + ((this.getMetaballData(x + 0.5, y - 0.5).totalVal >= 1) && 0b0100)
+      + ((this.getMetaballData(x - 0.5, y - 0.5).totalVal >= 1) && 0b1000);
   }
 
   render() {
