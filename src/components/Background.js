@@ -13,44 +13,24 @@ class Background extends React.Component {
 
   MULTIPLIER = 2
 
-  GRID = null;
-
-  COLOURS = [
-    [251, 180, 174], [179, 205, 227], [204, 239, 197], [222, 203, 228], [254, 217, 166], [255, 242, 174], [229, 216, 189], [253, 218, 236]
-  ]
+  colourScheme = null;
 
   constructor(props) {
     super(props);
+
+    this.colourScheme = props.colourSchemes[props.colourSchemeIndex];
+
     window.addEventListener('resize', this.windowResize);
     this.state = { width: window.innerWidth, height: window.innerHeight };
 
     this.initCircles();
     this.interval = setInterval(this.draw, this.INTERVAL_MILLIS);
-    this.setupGrid();
-
-    for(let i = this.COLOURS.length - 1; i > 0; i--){
-      const j = Math.floor(Math.random() * i)
-      const temp = this.COLOURS[i]
-      this.COLOURS[i] = this.COLOURS[j]
-      this.COLOURS[j] = temp
-    }
-    
   }
 
   windowResize = () => {
-    if (this.canvasRef.current) {
+    if (this.canvasRef.current) 
       this.setState({ width: window.innerWidth, height: window.innerHeight });
-      this.setupGrid();
-    }
   };
-
-  setupGrid = () => {
-    this.grid = new Array(Math.floor(this.state.height / 8));
-    for (var i = 0; i < this.grid.length; ++i) {
-      this.grid[i] = new Array(Math.floor(this.state.width / 8));
-      this.grid[i].fill([]);
-    }
-  }
 
   componentDidMount() {
     this.draw();
@@ -73,11 +53,12 @@ class Background extends React.Component {
         radius: radius,
         x: this.getRandomBetween(radius, this.state.width - radius),
         y: this.getRandomBetween(radius + 56, this.state.height - radius), // height of navbar
-        color: this.COLOURS[i],
+        color: this.colourScheme.colours[i % this.colourScheme.colours.length],
         velX: this.getRandomBetween(10, 100) * this.getRandomPosNeg(),
         velY: this.getRandomBetween(10, 100) * this.getRandomPosNeg(),
       });
     }
+    console.log(this.circles);
   }
 
   draw = () => {
@@ -85,10 +66,7 @@ class Background extends React.Component {
     const ctx = this.canvasRef.current.getContext('2d');
     ctx.clearRect(0, 0, this.state.width * this.MULTIPLIER, this.state.height * this.MULTIPLIER);
 
-    // Setup colours
-
-
-    // Draw circles
+    // Update circles
     this.circles.forEach(circle => {
       // Move Circle
       circle.x += circle.velX * (this.INTERVAL_MILLIS/1000);
@@ -111,13 +89,6 @@ class Background extends React.Component {
         circle.y = circle.radius + 56;
         circle.velY *= -1;
       }
-      /*
-      // Draw Circle
-      ctx.beginPath();
-      ctx.fillStyle = circle.color;
-      ctx.arc(circle.x * this.MULTIPLIER, circle.y * this.MULTIPLIER, circle.radius * this.MULTIPLIER, 0, 2 * Math.PI);
-      ctx.fill();
-      */
     });
 
     // Draw points
@@ -131,7 +102,7 @@ class Background extends React.Component {
     }
   }
 
-  getMetaballColor = (metaballData) => {
+  getMetaballColour = (metaballData) => {
     // If no circles, set default color.
     if (metaballData.data.length == 0) {
       return [255,255,255];
@@ -145,6 +116,7 @@ class Background extends React.Component {
     // Filtering doesn't work, will try switching this with a (2d array of colour arrays that all get flattened/avgd when drawn.)
     const totalWeight = metaballData.totalVal;
   
+    // make this weighted based on distance to inside of circle?
     const abcd = metaballData.data.reduce((a, b) =>  [
       (a[0] + Math.pow(b.color[0], 2) * (b.val / totalWeight)), 
       (a[1] + Math.pow(b.color[1], 2) * (b.val / totalWeight)),
@@ -158,7 +130,7 @@ class Background extends React.Component {
       return { 
         val: (circle.radius * circle.radius) / (Math.pow(x - circle.x, 2) + Math.pow(y - circle.y, 2)), 
         color: circle.color, 
-        distanceToMid: Math.sqrt(Math.pow(x - circle.x, 2) + Math.pow(y - circle.y, 2)),
+        distanceFromPoint: Math.max(0, Math.sqrt(Math.pow(x - circle.x, 2) + Math.pow(y - circle.y, 2)) - circle.radius),
       };
     });
 
@@ -187,9 +159,9 @@ class Background extends React.Component {
     }
     if (coords.length == 0) return;
 
-    const colors = this.getMetaballColor(metaballData);
+    const colour = this.getMetaballColour(metaballData);
     ctx.beginPath();
-    ctx.fillStyle = "#" + colors.map(x => {
+    ctx.fillStyle = "#" + colour.map(x => {
       const hex = Math.floor(x).toString(16);
       return hex.length === 1 ? '0' + hex : hex
     }).join('');
