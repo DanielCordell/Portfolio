@@ -32,10 +32,6 @@ class Background extends React.Component {
       this.setState({ width: window.innerWidth, height: window.innerHeight });
   };
 
-  componentDidMount() {
-    this.draw();
-  }
-
   componentDidUpdate() {
     this.draw();
   }
@@ -45,20 +41,19 @@ class Background extends React.Component {
   getRandomPosNeg = () => this.getRandomBetween(0, 1) === 0 ? -1 : 1;
 
   initCircles = () => {
-    const count = this.getRandomBetween(5, 8);
+    const count = this.getRandomBetween(5, 7);
     // Generate 4-8 random circles
     for (let i = 0; i < count; ++i) {
-      const radius = this.getRandomBetween(7, 18) * this.state.width / 150;
+      const radius = (count % 2 == 0 ? this.getRandomBetween(5, 10) : this.getRandomBetween(12,16)) * this.state.width / 150;
       this.circles.push({
         radius: radius,
         x: this.getRandomBetween(radius, this.state.width - radius),
         y: this.getRandomBetween(radius + 56, this.state.height - radius), // height of navbar
         color: this.colourScheme.colours[i % this.colourScheme.colours.length],
-        velX: this.getRandomBetween(10, 100) * this.getRandomPosNeg(),
-        velY: this.getRandomBetween(10, 100) * this.getRandomPosNeg(),
+        velX: this.getRandomBetween(50, 100) * this.getRandomPosNeg(),
+        velY: this.getRandomBetween(50, 100) * this.getRandomPosNeg(),
       });
     }
-    console.log(this.circles);
   }
 
   draw = () => {
@@ -103,6 +98,7 @@ class Background extends React.Component {
   }
 
   getMetaballColour = (metaballData) => {
+    /* DOESNT WORK, COME BACK TO THIS LATER
     // If no circles, set default color.
     if (metaballData.data.length == 0) {
       return [255,255,255];
@@ -123,14 +119,17 @@ class Background extends React.Component {
       (a[2] + Math.pow(b.color[2], 2) * (b.val / totalWeight)),
     ], [0, 0, 0]);
       return abcd.map(it => Math.round(Math.sqrt(it)));
+      */
+
+    return [104,116,128];
   }
 
   getMetaballData = (x, y) => {
     const data = this.circles.map(circle => {
       return { 
         val: (circle.radius * circle.radius) / (Math.pow(x - circle.x, 2) + Math.pow(y - circle.y, 2)), 
-        color: circle.color, 
-        distanceFromPoint: Math.max(0, Math.sqrt(Math.pow(x - circle.x, 2) + Math.pow(y - circle.y, 2)) - circle.radius),
+        //color: circle.color, 
+        //distanceFromPointdistanceFromPoint: Math.max(0, Math.sqrt(Math.pow(x - circle.x, 2) + Math.pow(y - circle.y, 2)) - circle.radius),
       };
     });
 

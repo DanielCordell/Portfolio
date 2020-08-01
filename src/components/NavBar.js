@@ -6,7 +6,8 @@ import { Nav, Navbar } from 'react-bootstrap';
 export default function NavBar(props) {
   const pathName = useLocation().pathname;
   return (
-    <Navbar bg="dark" variant="dark">
+    <Navbar bg="dark" variant="dark" style={{fontFamily: "'Titillium Web', sans-serif"
+  }}>
       <Nav style={{ flex: "auto" }} className="justify-content-center">
         {props.pages.map(page =>
           <Nav.Link key={page.path} as={Link} to={page.path} active={page.path === pathName}>{page.name}</Nav.Link>
