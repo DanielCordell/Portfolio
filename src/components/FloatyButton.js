@@ -19,14 +19,13 @@ class FloatyButton extends React.Component {
   AnimatedButton = styled(Button)`
     animation: ${this.floatAnimation} 2s ease-in-out infinite;
     box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.4);
-    position: fixed;
-    left: ${this.props.left};
-    top: ${this.props.top};
+    width: 16em;
   `
   
   render() {
+    const { onHover, style, text } = this.props;
     return (
-      <this.AnimatedButton><h3>{this.props.text}</h3></this.AnimatedButton>
+      <this.AnimatedButton onMouseEnter={onHover} style={style}><h4>{text}</h4></this.AnimatedButton>
     );
   }
 }
