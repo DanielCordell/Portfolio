@@ -19,7 +19,7 @@ export default function NavBar(props) {
   return (
     <Navbar bg="dark" variant="dark" style={{fontFamily: "'Titillium Web', sans-serif"
   }}>
-      <StyledFormCheck id="stillmode" label="Still Mode" style={{ userSelect: "none" }} onChange={(e) => props.setStillMode(e.target.checked)}/>
+      <StyledFormCheck aria-label="Enable Still Mode" id="stillmode" label="Still Mode" style={{ userSelect: "none" }} onChange={(e) => props.setStillMode(e.target.checked)}/>
       <Nav style={{ flex: "auto" }} className="justify-content-center">
         {props.pages.map(page =>
           <Nav.Link key={page.path} as={Link} to={page.path} active={page.path === pathName}>{page.name}</Nav.Link>

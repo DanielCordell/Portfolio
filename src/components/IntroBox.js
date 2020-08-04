@@ -6,8 +6,6 @@ import { Card, Image, Button } from 'react-bootstrap';
 import FloatyButton from './FloatyButton'
 import face from '../images/face.png';
 
-
-
 class IntroBox extends React.Component {
 
   StyledContainer = styled(Container)`
