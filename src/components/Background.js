@@ -62,7 +62,7 @@ class Background extends React.Component {
     ctx.clearRect(0, 0, this.state.width * this.MULTIPLIER, this.state.height * this.MULTIPLIER);
 
     // Update circles
-    this.circles.forEach(circle => {
+    if (!this.props.stillMode) this.circles.forEach(circle => {
       // Move Circle
       circle.x += circle.velX * (this.INTERVAL_MILLIS/1000);
       circle.y += circle.velY * (this.INTERVAL_MILLIS/1000);
