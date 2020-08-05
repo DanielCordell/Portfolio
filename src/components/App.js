@@ -27,7 +27,7 @@ function App() {
   const [stillMode, setStillMode] = useState(false);
 
   return (
-    <Router>
+    <Router  style={{overflow: "overlay"}} >
       <div>
         <Background colourSchemes={colourSchemes} colourSchemeIndex={colourSchemeIndex} stillMode={stillMode}/>
         <NavBar pages={pages} setStillMode={setStillMode}/>

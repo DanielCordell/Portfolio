@@ -5,7 +5,7 @@ import FloatyButton from "./FloatyButton";
 const buttonDetails = [
   { style: { float: "left",  marginLeft: "9em",   marginTop: "-10em", animationDelay: "-0.6s" }, text: "Software Engineer" },
   { style: { float: "right", marginRight: "9em", marginTop: "-10em", animationDelay: "-0s" }, text: "Game Develeoper" },
-  { style: { margin: "5em auto 0", display: "block",  animationDelay: "-0.3s", position: "absolute", left: "0", "right": "0"}, text: "Technical Educator" }
+  { style: { margin: "3em auto 0", display: "block",  animationDelay: "-0.3s", position: "absolute", left: "0", "right": "0"}, text: "Technical Educator" }
 ]
 
 export default function Main(props) {

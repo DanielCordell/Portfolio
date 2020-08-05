@@ -22,7 +22,7 @@ export default function NavBar(props) {
       <StyledFormCheck aria-label="Enable Still Mode" id="stillmode" label="Still Mode" style={{ userSelect: "none" }} onChange={(e) => props.setStillMode(e.target.checked)}/>
       <Nav style={{ flex: "auto" }} className="justify-content-center">
         {props.pages.map(page =>
-          <Nav.Link key={page.path} as={Link} to={page.path} active={page.path === pathName}>{page.name}</Nav.Link>
+          <Nav.Link style={{ fontSize: "1.5rem" }}key={page.path} as={Link} to={page.path} active={page.path === pathName}>{page.name}</Nav.Link>
         )}
       </Nav>
     </Navbar>

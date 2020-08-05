@@ -6,7 +6,7 @@ class FloatyButton extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { hover: true, flyingIn: true };
+    this.state = { hover: true, flyingIn: !props.stillMode };
   }
 
   componentWillReceiveProps(nextProps) {
@@ -39,7 +39,7 @@ class FloatyButton extends React.Component {
     box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.4);
     width: 16em;
     animation-play-state: ${props => props.hover && !props.stillmode ? "running" : "paused"};
-    animation-delay: ${props => props.flyingin ? "" : "0s!important"}
+    animation-delay: ${props => props.flyingin ? "initial" : "0s!important"};
     will-change: transform;
   `
   

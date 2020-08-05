@@ -11,7 +11,7 @@ class Background extends React.Component {
 
   INTERVAL_MILLIS = 15;
 
-  MULTIPLIER = 2
+  MULTIPLIER = 2;
 
   colourScheme = null;
 
@@ -60,7 +60,8 @@ class Background extends React.Component {
     if (!this.canvasRef.current) return;
     const ctx = this.canvasRef.current.getContext('2d');
     ctx.clearRect(0, 0, this.state.width * this.MULTIPLIER, this.state.height * this.MULTIPLIER);
-
+    ctx.fillStyle = "#343a40";
+    ctx.fillRect(0, 0, this.state.width * this.MULTIPLIER, this.state.height * this.MULTIPLIER);
     // Update circles
     if (!this.props.stillMode) this.circles.forEach(circle => {
       // Move Circle
@@ -80,15 +81,15 @@ class Background extends React.Component {
         circle.y = this.state.height - circle.radius;
         circle.velY *= -1;
       }
-      else if (circle.y < circle.radius + 56) {
-        circle.y = circle.radius + 56;
+      else if (circle.y < circle.radius + 68) {
+        circle.y = circle.radius + 68;
         circle.velY *= -1;
       }
     });
 
     // Draw points
-    for (let x = 0; x <= this.state.width; x += 8) {
-      for (let y = 0; y <= this.state.height; y += 8) {
+    for (let x = 0; x <= this.state.width; x += 10) {
+      for (let y = 0; y <= this.state.height; y += 10) {
         const metaballData = this.getMetaballData(x, y);
         const marchingBinary = this.calculateMarching(x, y);
         
@@ -121,7 +122,7 @@ class Background extends React.Component {
       return abcd.map(it => Math.round(Math.sqrt(it)));
       */
 
-    return [104,116,128];
+    return [255,255,255];
   }
 
   getMetaballData = (x, y) => {
@@ -139,21 +140,21 @@ class Background extends React.Component {
   drawCell = (ctx, x, y, metaballData, marchingBinary) => {
     let coords = []
     switch (marchingBinary) {
-      case 1: coords = [{x: x-3, y}, {x, y: y+3}, {x: x-3, y: y+3}]; break;
-      case 2: coords = [{x: x+3, y}, {x, y: y+3}, {x: x+3, y: y+3}]; break;
-      case 3: coords = [{x: x-3, y}, {x: x+3, y}, {x: x+3, y: y+3}, {x: x-3, y: y+3}]; break;
-      case 4: coords = [{x: x+3, y}, {x, y: y-3}, {x: x+3, y: y-3}]; break;
-      case 5: coords = [{x: x-3, y: y+3}, {x: x-3, y}, {x, y: y-3}, {x: x+3, y: y-3}, {x: x+3, y}, {x, y: y+3}]; break;
-      case 6: coords = [{x: x+3, y: y+3}, {x, y: y+3}, {x, y: y-3}, {x: x+3, y: y-3}]; break;
-      case 7: coords = [{x: x-3, y: y+3}, {x, y: y+3}, {x, y: y-3}, {x: x+3, y: y-3}, {x: x+3, y: y+3}]; break;
-      case 8: coords = [{x: x-3, y: y-3}, {x, y: y-3}, {x: x-3, y}]; break;
-      case 9: coords = [{x: x-3, y: y+3}, {x, y: y+3}, {x, y: y-3}, {x: x-3, y: y-3}]; break;
-      case 10: coords = [{x: x+3, y: y+3}, {x: x+3, y}, {x, y: y-3}, {x: x-3, y: y-3}, {x: x-3, y}, {x, y: y+3}]; break;
-      case 11: coords = [{x: x+3, y: y+3}, {x, y: y+3}, {x, y: y-3}, {x: x-3, y: y-3}, {x: x-3, y: y+3}]; break;
-      case 12: coords = [{x: x-3, y}, {x: x+3, y}, {x: x+3, y: y-3}, {x: x-3, y: y-3}]; break;
-      case 13: coords = [{x: x+3, y: y-3}, {x, y: y-3}, {x, y: y+3}, {x: x-3, y: y+3}, {x: x-3, y: y-3}]; break;
-      case 14: coords = [{x: x-3, y: y-3}, {x, y: y-3}, {x, y: y+3}, {x: x+3, y: y+3}, {x: x+3, y: y-3}]; break;
-      case 15: coords = [{x: x-3, y: y-3}, {x: x+3, y: y-3}, {x: x+3, y: y+3}, {x: x-3, y: y+3}]; break;
+      case 1: coords = [{x: x-5, y}, {x, y: y+5}, {x: x-5, y: y+5}]; break;
+      case 2: coords = [{x: x+5, y}, {x, y: y+5}, {x: x+5, y: y+5}]; break;
+      case 3: coords = [{x: x-5, y}, {x: x+5, y}, {x: x+5, y: y+5}, {x: x-5, y: y+5}]; break;
+      case 4: coords = [{x: x+5, y}, {x, y: y-5}, {x: x+5, y: y-5}]; break;
+      case 5: coords = [{x: x-5, y: y+5}, {x: x-5, y}, {x, y: y-5}, {x: x+5, y: y-5}, {x: x+5, y}, {x, y: y+5}]; break;
+      case 6: coords = [{x: x+5, y: y+5}, {x, y: y+5}, {x, y: y-5}, {x: x+5, y: y-5}]; break;
+      case 7: coords = [{x: x-5, y: y+5}, {x, y: y+5}, {x, y: y-5}, {x: x+5, y: y-5}, {x: x+5, y: y+5}]; break;
+      case 8: coords = [{x: x-5, y: y-5}, {x, y: y-5}, {x: x-5, y}]; break;
+      case 9: coords = [{x: x-5, y: y+5}, {x, y: y+5}, {x, y: y-5}, {x: x-5, y: y-5}]; break;
+      case 10: coords = [{x: x+5, y: y+5}, {x: x+5, y}, {x, y: y-5}, {x: x-5, y: y-5}, {x: x-5, y}, {x, y: y+5}]; break;
+      case 11: coords = [{x: x+5, y: y+5}, {x, y: y+5}, {x, y: y-5}, {x: x-5, y: y-5}, {x: x-5, y: y+5}]; break;
+      case 12: coords = [{x: x-5, y}, {x: x+5, y}, {x: x+5, y: y-5}, {x: x-5, y: y-5}]; break;
+      case 13: coords = [{x: x+5, y: y-5}, {x, y: y-5}, {x, y: y+5}, {x: x-5, y: y+5}, {x: x-5, y: y-5}]; break;
+      case 14: coords = [{x: x-5, y: y-5}, {x, y: y-5}, {x, y: y+5}, {x: x+5, y: y+5}, {x: x+5, y: y-5}]; break;
+      case 15: coords = [{x: x-5, y: y-5}, {x: x+5, y: y-5}, {x: x+5, y: y+5}, {x: x-5, y: y+5}]; break;
       default: break;
     }
     if (coords.length == 0) return;

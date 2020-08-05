@@ -13,12 +13,15 @@ class IntroBox extends React.Component {
     `;
 
   StyledCard = styled(Card)`
-    width: 40vw;
-    max-width: 20em;
+    width: 60vw;
+    max-width: 40em;
     margin-top: 5vh;
     text-align: center;
-    background-color: #343a40dd !important;
-  `;
+    background-color: #ffffff00 !important;
+    -webkit-text-stroke-width: 2.5px;
+    -webkit-text-stroke-color: black;
+    border: none !important;
+    `;
 
   StyledImage = styled(Image).attrs(props => ({src: props.image, roundedCircle: true, fluid: true}))`
     width: 8em;
@@ -33,9 +36,9 @@ class IntroBox extends React.Component {
         <this.StyledCard className="align-middle text-white mx-auto d-block">
         <this.StyledImage image={face}/>
         <Card.Body>
-          <Card.Title><h1>Hi, I'm Daniel</h1></Card.Title>
+          <Card.Title style={{fontSize: "3.5rem"}}>Hi, I'm Daniel</Card.Title>
             <Card.Text>
-              <br/><span style={{fontSize: "1.2em"}}>I'm a...</span><br/><span style={{fontSize: "1.5em"}}>{this.props.text}</span>
+              <br/><span style={{fontSize: "2rem"}}>I'm a...</span><br/><span style={{fontSize: "3rem"}}>{this.props.text}</span>
             </Card.Text>
           </Card.Body>
         </this.StyledCard>
