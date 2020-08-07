@@ -41,6 +41,7 @@ class FloatyButton extends React.Component {
     animation-play-state: ${props => props.hover && !props.stillmode ? "running" : "paused"};
     animation-delay: ${props => props.flyingin ? "initial" : "0s!important"};
     will-change: transform;
+    transform: translatey(0%);
   `
   
   render() {

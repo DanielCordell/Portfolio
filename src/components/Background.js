@@ -11,7 +11,7 @@ class Background extends React.Component {
 
   INTERVAL_MILLIS = 15;
 
-  MULTIPLIER = 2;
+  SIZECONST = 4;
 
   colourScheme = null;
 
@@ -41,7 +41,7 @@ class Background extends React.Component {
   getRandomPosNeg = () => this.getRandomBetween(0, 1) === 0 ? -1 : 1;
 
   initCircles = () => {
-    const count = this.getRandomBetween(5, 7);
+    const count = this.getRandomBetween(4, 6);
     // Generate 4-8 random circles
     for (let i = 0; i < count; ++i) {
       const radius = (count % 2 == 0 ? this.getRandomBetween(5, 10) : this.getRandomBetween(12,16)) * this.state.width / 150;
@@ -49,7 +49,6 @@ class Background extends React.Component {
         radius: radius,
         x: this.getRandomBetween(radius, this.state.width - radius),
         y: this.getRandomBetween(radius + 56, this.state.height - radius), // height of navbar
-        color: this.colourScheme.colours[i % this.colourScheme.colours.length],
         velX: this.getRandomBetween(50, 100) * this.getRandomPosNeg(),
         velY: this.getRandomBetween(50, 100) * this.getRandomPosNeg(),
       });
@@ -59,9 +58,9 @@ class Background extends React.Component {
   draw = () => {
     if (!this.canvasRef.current) return;
     const ctx = this.canvasRef.current.getContext('2d');
-    ctx.clearRect(0, 0, this.state.width * this.MULTIPLIER, this.state.height * this.MULTIPLIER);
+    ctx.clearRect(0, 0, this.state.width, this.state.height);
     ctx.fillStyle = "#343a40";
-    ctx.fillRect(0, 0, this.state.width * this.MULTIPLIER, this.state.height * this.MULTIPLIER);
+    ctx.fillRect(0, 0, this.state.width, this.state.height);
     // Update circles
     if (!this.props.stillMode) this.circles.forEach(circle => {
       // Move Circle
@@ -86,112 +85,77 @@ class Background extends React.Component {
         circle.velY *= -1;
       }
     });
-
+    
     // Draw points
-    for (let x = 0; x <= this.state.width; x += 10) {
-      for (let y = 0; y <= this.state.height; y += 10) {
-        const metaballData = this.getMetaballData(x, y);
+    for (let x = 0; x <= this.state.width; x += this.SIZECONST * 2) {
+      for (let y = 0; y <= this.state.height; y += this.SIZECONST * 2) {
         const marchingBinary = this.calculateMarching(x, y);
         
-        this.drawCell(ctx, x, y, metaballData, marchingBinary);
+        this.drawCell(ctx, x, y, marchingBinary);
       }
     }
-  }
-
-  getMetaballColour = (metaballData) => {
-    /* DOESNT WORK, COME BACK TO THIS LATER
-    // If no circles, set default color.
-    if (metaballData.data.length == 0) {
-      return [255,255,255];
-    }
-    // If only one circle just return that colour, no averaging
-    else if (metaballData.data.length == 1) {
-      return metaballData.data[0].color;
-    }
-
-    // This is factoring in other circles and dulling out other colours
-    // Filtering doesn't work, will try switching this with a (2d array of colour arrays that all get flattened/avgd when drawn.)
-    const totalWeight = metaballData.totalVal;
-  
-    // make this weighted based on distance to inside of circle?
-    const abcd = metaballData.data.reduce((a, b) =>  [
-      (a[0] + Math.pow(b.color[0], 2) * (b.val / totalWeight)), 
-      (a[1] + Math.pow(b.color[1], 2) * (b.val / totalWeight)),
-      (a[2] + Math.pow(b.color[2], 2) * (b.val / totalWeight)),
-    ], [0, 0, 0]);
-      return abcd.map(it => Math.round(Math.sqrt(it)));
-      */
-
-    return [255,255,255];
+    
   }
 
   getMetaballData = (x, y) => {
     const data = this.circles.map(circle => {
-      return { 
-        val: (circle.radius * circle.radius) / (Math.pow(x - circle.x, 2) + Math.pow(y - circle.y, 2)), 
-        //color: circle.color, 
-        //distanceFromPointdistanceFromPoint: Math.max(0, Math.sqrt(Math.pow(x - circle.x, 2) + Math.pow(y - circle.y, 2)) - circle.radius),
-      };
+      return (circle.radius * circle.radius) / (Math.pow(x - circle.x, 2) + Math.pow(y - circle.y, 2))      
     });
 
-    return {data, totalVal: data.reduce((a, b) => a + b.val, 0)};
+    return data.reduce((a, b) => a + b, 0);
   }
 
-  drawCell = (ctx, x, y, metaballData, marchingBinary) => {
+  drawCell = (ctx, x, y, marchingBinary) => {
     let coords = []
     switch (marchingBinary) {
-      case 1: coords = [{x: x-5, y}, {x, y: y+5}, {x: x-5, y: y+5}]; break;
-      case 2: coords = [{x: x+5, y}, {x, y: y+5}, {x: x+5, y: y+5}]; break;
-      case 3: coords = [{x: x-5, y}, {x: x+5, y}, {x: x+5, y: y+5}, {x: x-5, y: y+5}]; break;
-      case 4: coords = [{x: x+5, y}, {x, y: y-5}, {x: x+5, y: y-5}]; break;
-      case 5: coords = [{x: x-5, y: y+5}, {x: x-5, y}, {x, y: y-5}, {x: x+5, y: y-5}, {x: x+5, y}, {x, y: y+5}]; break;
-      case 6: coords = [{x: x+5, y: y+5}, {x, y: y+5}, {x, y: y-5}, {x: x+5, y: y-5}]; break;
-      case 7: coords = [{x: x-5, y: y+5}, {x, y: y+5}, {x, y: y-5}, {x: x+5, y: y-5}, {x: x+5, y: y+5}]; break;
-      case 8: coords = [{x: x-5, y: y-5}, {x, y: y-5}, {x: x-5, y}]; break;
-      case 9: coords = [{x: x-5, y: y+5}, {x, y: y+5}, {x, y: y-5}, {x: x-5, y: y-5}]; break;
-      case 10: coords = [{x: x+5, y: y+5}, {x: x+5, y}, {x, y: y-5}, {x: x-5, y: y-5}, {x: x-5, y}, {x, y: y+5}]; break;
-      case 11: coords = [{x: x+5, y: y+5}, {x, y: y+5}, {x, y: y-5}, {x: x-5, y: y-5}, {x: x-5, y: y+5}]; break;
-      case 12: coords = [{x: x-5, y}, {x: x+5, y}, {x: x+5, y: y-5}, {x: x-5, y: y-5}]; break;
-      case 13: coords = [{x: x+5, y: y-5}, {x, y: y-5}, {x, y: y+5}, {x: x-5, y: y+5}, {x: x-5, y: y-5}]; break;
-      case 14: coords = [{x: x-5, y: y-5}, {x, y: y-5}, {x, y: y+5}, {x: x+5, y: y+5}, {x: x+5, y: y-5}]; break;
-      case 15: coords = [{x: x-5, y: y-5}, {x: x+5, y: y-5}, {x: x+5, y: y+5}, {x: x-5, y: y+5}]; break;
+      case 1: coords = [{x: x-this.SIZECONST, y}, {x, y: y+this.SIZECONST}, {x: x-this.SIZECONST, y: y+this.SIZECONST}]; break;
+      case 2: coords = [{x: x+this.SIZECONST, y}, {x, y: y+this.SIZECONST}, {x: x+this.SIZECONST, y: y+this.SIZECONST}]; break;
+      case 3: coords = [{x: x-this.SIZECONST, y}, {x: x+this.SIZECONST, y}, {x: x+this.SIZECONST, y: y+this.SIZECONST}, {x: x-this.SIZECONST, y: y+this.SIZECONST}]; break;
+      case 4: coords = [{x: x+this.SIZECONST, y}, {x, y: y-this.SIZECONST}, {x: x+this.SIZECONST, y: y-this.SIZECONST}]; break;
+      case 5: coords = [{x: x-this.SIZECONST, y: y+this.SIZECONST}, {x: x-this.SIZECONST, y}, {x, y: y-this.SIZECONST}, {x: x+this.SIZECONST, y: y-this.SIZECONST}, {x: x+this.SIZECONST, y}, {x, y: y+this.SIZECONST}]; break;
+      case 6: coords = [{x: x+this.SIZECONST, y: y+this.SIZECONST}, {x, y: y+this.SIZECONST}, {x, y: y-this.SIZECONST}, {x: x+this.SIZECONST, y: y-this.SIZECONST}]; break;
+      case 7: coords = [{x: x-this.SIZECONST, y: y+this.SIZECONST}, {x: x-this.SIZECONST, y}, {x, y: y-this.SIZECONST}, {x: x+this.SIZECONST, y: y-this.SIZECONST}, {x: x+this.SIZECONST, y: y+this.SIZECONST}]; break;
+      case 8: coords = [{x: x-this.SIZECONST, y: y-this.SIZECONST}, {x, y: y-this.SIZECONST}, {x: x-this.SIZECONST, y}]; break;
+      case 9: coords = [{x: x-this.SIZECONST, y: y+this.SIZECONST}, {x, y: y+this.SIZECONST}, {x, y: y-this.SIZECONST}, {x: x-this.SIZECONST, y: y-this.SIZECONST}]; break;
+      case 10: coords = [{x: x+this.SIZECONST, y: y+this.SIZECONST}, {x: x+this.SIZECONST, y}, {x, y: y-this.SIZECONST}, {x: x-this.SIZECONST, y: y-this.SIZECONST}, {x: x-this.SIZECONST, y}, {x, y: y+this.SIZECONST}]; break;
+      case 11: coords = [{x: x+this.SIZECONST, y: y+this.SIZECONST}, {x: x+this.SIZECONST, y}, {x, y: y-this.SIZECONST}, {x: x-this.SIZECONST, y: y-this.SIZECONST}, {x: x-this.SIZECONST, y: y+this.SIZECONST}]; break;
+      case 12: coords = [{x: x-this.SIZECONST, y}, {x: x+this.SIZECONST, y}, {x: x+this.SIZECONST, y: y-this.SIZECONST}, {x: x-this.SIZECONST, y: y-this.SIZECONST}]; break;
+      case 13: coords = [{x: x+this.SIZECONST, y: y-this.SIZECONST}, {x: x+this.SIZECONST, y}, {x, y: y+this.SIZECONST}, {x: x-this.SIZECONST, y: y+this.SIZECONST}, {x: x-this.SIZECONST, y: y-this.SIZECONST}]; break;
+      case 14: coords = [{x: x-this.SIZECONST, y: y-this.SIZECONST}, {x: x-this.SIZECONST, y}, {x, y: y+this.SIZECONST}, {x: x+this.SIZECONST, y: y+this.SIZECONST}, {x: x+this.SIZECONST, y: y-this.SIZECONST}]; break;
+      case 15: coords = [{x: x-this.SIZECONST, y: y-this.SIZECONST}, {x: x+this.SIZECONST, y: y-this.SIZECONST}, {x: x+this.SIZECONST, y: y+this.SIZECONST}, {x: x-this.SIZECONST, y: y+this.SIZECONST}]; break;
       default: break;
     }
     if (coords.length == 0) return;
 
-    const colour = this.getMetaballColour(metaballData);
     ctx.beginPath();
-    ctx.fillStyle = "#" + colour.map(x => {
-      const hex = Math.floor(x).toString(16);
-      return hex.length === 1 ? '0' + hex : hex
-    }).join('');
-    ctx.moveTo(coords[0].x * this.MULTIPLIER, coords[0].y * this.MULTIPLIER);
+    ctx.fillStyle = "#ffffff";
+    ctx.moveTo(coords[0].x, coords[0].y);
     for (let i = 1; i < coords.length; ++i) {
-      ctx.lineTo(coords[i].x * this.MULTIPLIER, coords[i].y * this.MULTIPLIER);
+      ctx.lineTo(coords[i].x, coords[i].y);
     }
     ctx.closePath();
     ctx.fill();
   }
 
   calculateMarching(x, y) {
-    return ((this.getMetaballData(x - 0.5, y + 0.5).totalVal >= 1) && 0b0001)
-      + ((this.getMetaballData(x + 0.5, y + 0.5).totalVal >= 1) && 0b0010)
-      + ((this.getMetaballData(x + 0.5, y - 0.5).totalVal >= 1) && 0b0100)
-      + ((this.getMetaballData(x - 0.5, y - 0.5).totalVal >= 1) && 0b1000);
+    return ((this.getMetaballData(x - this.SIZECONST, y + this.SIZECONST) >= 1) && 0b0001)
+      + ((this.getMetaballData(x + this.SIZECONST, y + this.SIZECONST) >= 1) && 0b0010)
+      + ((this.getMetaballData(x + this.SIZECONST, y - this.SIZECONST) >= 1) && 0b0100)
+      + ((this.getMetaballData(x - this.SIZECONST, y - this.SIZECONST) >= 1) && 0b1000);
   }
 
   render() {
     if (this.canvasRef.current) {
-      this.canvasRef.current.width = this.state.width * this.MULTIPLIER;
-      this.canvasRef.current.height = this.state.height * this.MULTIPLIER;
+      this.canvasRef.current.width = this.state.width;
+      this.canvasRef.current.height = this.state.height;
     }
 
     return (
       <canvas
         style={{ position: "fixed", zIndex: -1, width: window.innerWidth + "px", height: window.innerHeight + "px" }}
         ref={this.canvasRef}
-        width={window.innerWidth * this.MULTIPLIER}
-        height={window.innerHeight * this.MULTIPLIER}
+        width={window.innerWidth}
+        height={window.innerHeight}
       />
     );
   }

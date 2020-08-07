@@ -38,7 +38,7 @@ class IntroBox extends React.Component {
         <Card.Body>
           <Card.Title style={{fontSize: "3.5rem"}}>Hi, I'm Daniel</Card.Title>
             <Card.Text>
-              <br/><span style={{fontSize: "2rem"}}>I'm a...</span><br/><span style={{fontSize: "3rem"}}>{this.props.text}</span>
+              <br/><span style={{fontSize: "2.5rem"}}>I'm a...</span><br/><span style={{fontSize: "3rem"}}>{this.props.text}</span>
             </Card.Text>
           </Card.Body>
         </this.StyledCard>
