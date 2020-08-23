@@ -49,8 +49,8 @@ class Background extends React.Component {
         radius: radius,
         x: this.getRandomBetween(radius, this.state.width - radius),
         y: this.getRandomBetween(radius + 56, this.state.height - radius), // height of navbar
-        velX: this.getRandomBetween(50, 100) * this.getRandomPosNeg(),
-        velY: this.getRandomBetween(50, 100) * this.getRandomPosNeg(),
+        velX: this.getRandomBetween(75, 125) * this.getRandomPosNeg(),
+        velY: this.getRandomBetween(75, 125) * this.getRandomPosNeg(),
       });
     }
   }
@@ -108,12 +108,12 @@ class Background extends React.Component {
   drawCell = (ctx, x, y, marchingBinary) => {
     let coords = []
     switch (marchingBinary) {
-      case 1: coords = [{x: x-this.SIZECONST, y}, {x, y: y+this.SIZECONST}, {x: x-this.SIZECONST, y: y+this.SIZECONST}]; break;
-      case 2: coords = [{x: x+this.SIZECONST, y}, {x, y: y+this.SIZECONST}, {x: x+this.SIZECONST, y: y+this.SIZECONST}]; break;
-      case 3: coords = [{x: x-this.SIZECONST, y}, {x: x+this.SIZECONST, y}, {x: x+this.SIZECONST, y: y+this.SIZECONST}, {x: x-this.SIZECONST, y: y+this.SIZECONST}]; break;
-      case 4: coords = [{x: x+this.SIZECONST, y}, {x, y: y-this.SIZECONST}, {x: x+this.SIZECONST, y: y-this.SIZECONST}]; break;
-      case 5: coords = [{x: x-this.SIZECONST, y: y+this.SIZECONST}, {x: x-this.SIZECONST, y}, {x, y: y-this.SIZECONST}, {x: x+this.SIZECONST, y: y-this.SIZECONST}, {x: x+this.SIZECONST, y}, {x, y: y+this.SIZECONST}]; break;
-      case 6: coords = [{x: x+this.SIZECONST, y: y+this.SIZECONST}, {x, y: y+this.SIZECONST}, {x, y: y-this.SIZECONST}, {x: x+this.SIZECONST, y: y-this.SIZECONST}]; break;
+      case 1: coords = [{x: x-this.SIZECONST, y: this.linearInterpolate(x - this.SIZECONST, y + this.SIZECONST, x - this.SIZECONST, y - this.SIZECONST, false)}, {x: this.linearInterpolate(x + this.SIZECONST, y + this.SIZECONST, x - this.SIZECONST, y + this.SIZECONST, true), y: y+this.SIZECONST}, {x: x-this.SIZECONST, y: y+this.SIZECONST}]; break;
+      case 2: coords = [{x: x+this.SIZECONST, y: this.linearInterpolate(x + this.SIZECONST, y + this.SIZECONST, x + this.SIZECONST, y - this.SIZECONST, false)}, {x: this.linearInterpolate(x + this.SIZECONST, y + this.SIZECONST, x - this.SIZECONST, y + this.SIZECONST, true), y: y+this.SIZECONST}, {x: x+this.SIZECONST, y: y+this.SIZECONST}]; break;
+      case 3: coords = [{x: x-this.SIZECONST, y: this.linearInterpolate(x - this.SIZECONST, y - this.SIZECONST, x - this.SIZECONST, y + this.SIZECONST, false)}, {x: x+this.SIZECONST, y: this.linearInterpolate(x + this.SIZECONST, y - this.SIZECONST, x + this.SIZECONST, y + this.SIZECONST, false)}, {x: x+this.SIZECONST, y: y+this.SIZECONST}, {x: x-this.SIZECONST, y: y+this.SIZECONST}]; break;
+      case 4: coords = [{x: x+this.SIZECONST, y: this.linearInterpolate(x + this.SIZECONST, y + this.SIZECONST, x + this.SIZECONST, y - this.SIZECONST, false)}, {x: this.linearInterpolate(x + this.SIZECONST, y - this.SIZECONST, x - this.SIZECONST, y - this.SIZECONST, true), y: y-this.SIZECONST}, {x: x+this.SIZECONST, y: y-this.SIZECONST}]; break;
+      case 5: coords = [{x: x-this.SIZECONST, y: y+this.SIZECONST}, {x: x-this.SIZECONST, y: this.linearInterpolate(x - this.SIZECONST, y + this.SIZECONST, x - this.SIZECONST, y - this.SIZECONST, false)}, {x: this.linearInterpolate(x - this.SIZECONST, y - this.SIZECONST, x + this.SIZECONST, y - this.SIZECONST, true), y: y-this.SIZECONST}, {x: x+this.SIZECONST, y: y-this.SIZECONST}, {x: x+this.SIZECONST, y: this.linearInterpolate(x + this.SIZECONST, y + this.SIZECONST, x + this.SIZECONST, y - this.SIZECONST, false)}, {x: this.linearInterpolate(x + this.SIZECONST, y + this.SIZECONST, x - this.SIZECONST, y + this.SIZECONST, true), y: y+this.SIZECONST}]; break;
+      case 6: coords = [{x: x+this.SIZECONST, y: y+this.SIZECONST}, {x: this.linearInterpolate(x + this.SIZECONST, y + this.SIZECONST, x - this.SIZECONST, y + this.SIZECONST, true), y: y+this.SIZECONST}, {x: this.linearInterpolate(x + this.SIZECONST, y - this.SIZECONST, x - this.SIZECONST, y - this.SIZECONST, true), y: y-this.SIZECONST}, {x: x+this.SIZECONST, y: y-this.SIZECONST}]; break;
       case 7: coords = [{x: x-this.SIZECONST, y: y+this.SIZECONST}, {x: x-this.SIZECONST, y}, {x, y: y-this.SIZECONST}, {x: x+this.SIZECONST, y: y-this.SIZECONST}, {x: x+this.SIZECONST, y: y+this.SIZECONST}]; break;
       case 8: coords = [{x: x-this.SIZECONST, y: y-this.SIZECONST}, {x, y: y-this.SIZECONST}, {x: x-this.SIZECONST, y}]; break;
       case 9: coords = [{x: x-this.SIZECONST, y: y+this.SIZECONST}, {x, y: y+this.SIZECONST}, {x, y: y-this.SIZECONST}, {x: x-this.SIZECONST, y: y-this.SIZECONST}]; break;
@@ -123,9 +123,8 @@ class Background extends React.Component {
       case 13: coords = [{x: x+this.SIZECONST, y: y-this.SIZECONST}, {x: x+this.SIZECONST, y}, {x, y: y+this.SIZECONST}, {x: x-this.SIZECONST, y: y+this.SIZECONST}, {x: x-this.SIZECONST, y: y-this.SIZECONST}]; break;
       case 14: coords = [{x: x-this.SIZECONST, y: y-this.SIZECONST}, {x: x-this.SIZECONST, y}, {x, y: y+this.SIZECONST}, {x: x+this.SIZECONST, y: y+this.SIZECONST}, {x: x+this.SIZECONST, y: y-this.SIZECONST}]; break;
       case 15: coords = [{x: x-this.SIZECONST, y: y-this.SIZECONST}, {x: x+this.SIZECONST, y: y-this.SIZECONST}, {x: x+this.SIZECONST, y: y+this.SIZECONST}, {x: x-this.SIZECONST, y: y+this.SIZECONST}]; break;
-      default: break;
+      default: return;
     }
-    if (coords.length == 0) return;
 
     ctx.beginPath();
     ctx.fillStyle = "#ffffff";
@@ -163,6 +162,15 @@ class Background extends React.Component {
   componentToHex = (c) => {
     var hex = c.toString(16);
     return hex.length == 1 ? "0" + hex : hex;
+  }
+
+  linearInterpolate(aX, aY, bX, bY, xCoord) {
+    const fA = this.getMetaballData(aX, aY);
+    const fB = this.getMetaballData(bX, bY);
+
+    const lerp = (1 - fA) / (fB - fA);
+
+    return xCoord ? (aX + (bX - aX) * lerp) : (aY + (bY - aY) * lerp);
   }
   
 }
