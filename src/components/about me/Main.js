@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import IntroBox from "./IntroBox";
-import FloatyButton from "./FloatyButton";
+import FloatyButton from "../FloatyButton";
 
 const buttonDetails = [
   { style: { float: "left",  marginLeft: "9em",   marginTop: "-10em", animationDelay: "-0.6s" }, text: "Software Engineer" },
