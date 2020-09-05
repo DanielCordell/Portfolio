@@ -9,7 +9,7 @@ const buttonDetails = [
 ]
 
 export default function Main(props) {
-  const [highlightedButtonIndex, setHighlightedButtonIndex] = useState(0)
+  const [highlightedButtonIndex, setHighlightedButtonIndex] = useState(0);
 
   return (
     <>
