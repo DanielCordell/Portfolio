@@ -17,15 +17,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # Runs a single command using the runners shell
-      - name: Build
-        uses: Borales/actions-yarn@v2.3.0
-
-      # Runs a set of commands using the runners shell
-      - name: Setup NPM
-        uses: actions/setup-node@v1
-        with:
-          node-version: '12'
+      - uses: bahmutov/npm-install@v1
       - name: Setup NPM
         run: npm install
       - name: build
