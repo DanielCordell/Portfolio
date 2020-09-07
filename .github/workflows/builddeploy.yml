@@ -22,6 +22,11 @@ jobs:
       - name: build
         run: npm run-script build
         
+      - uses: actions/upload-artifact@v2
+        with:
+          name: my-artifact
+          path: /
+        
       - uses: appleboy/scp-action@master
         env:
           HOST: ${{ secrets.WEBSERVER }}
