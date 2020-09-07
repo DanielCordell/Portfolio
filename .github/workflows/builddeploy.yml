@@ -21,3 +21,14 @@ jobs:
         uses: bahmutov/npm-install@v1
       - name: build
         run: npm run-script build
+        
+      - uses: appleboy/scp-action@master
+        env:
+          HOST: ${{ secrets.WEBSERVER }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PORT: ${{ secrets.PORT }}
+          KEY: ${{ secrets.SSH_KEY }}
+        with:
+          source: "/build"
+          target: "/app/"
+
