@@ -23,7 +23,8 @@ const pages = [
 
 function App() {
 
-  const [colourSchemeIndex, setColourSchemeIndex] = useState(0);
+  //const [colourSchemeIndex, setColourSchemeIndex] = useState(0);
+  const colourSchemeIndex = 0;
   const [stillMode, setStillMode] = useState(false);
 
   return (

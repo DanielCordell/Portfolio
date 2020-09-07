@@ -1,7 +1,5 @@
 import React from 'react';
 
-import distinctColors from 'distinct-colors'
-
 class Background extends React.Component {
   canvasRef = React.createRef(null);
 
@@ -161,7 +159,7 @@ class Background extends React.Component {
 
   componentToHex = (c) => {
     var hex = c.toString(16);
-    return hex.length == 1 ? "0" + hex : hex;
+    return hex.length === 1 ? "0" + hex : hex;
   }
 
   linearInterpolate(aX, aY, bX, bY, xCoord) {

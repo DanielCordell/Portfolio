@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import Container from 'react-bootstrap/Container';
-import { Card, Image, Button } from 'react-bootstrap';
+import { Card, Image } from 'react-bootstrap';
 
-import FloatyButton from '../FloatyButton'
 import face from '../../images/face.png';
 
 class IntroBox extends React.Component {
