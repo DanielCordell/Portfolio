@@ -170,7 +170,6 @@ class Background extends React.Component {
 
     return xCoord ? (aX + (bX - aX) * lerp) : (aY + (bY - aY) * lerp);
   }
-  
 }
 
 export default Background;
