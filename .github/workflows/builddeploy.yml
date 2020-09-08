@@ -27,8 +27,6 @@ jobs:
           HOST: ${{ secrets.WEBSERVER }}
           USERNAME: ${{ secrets.USERNAME }}
           PORT: ${{ secrets.PORT }}
-          KEY: ${{ secrets.SSH_KEY }}
-          PASSPHRASE: ${{ secrets.SSH_KEYPASS }}
           PASSWORD: ${{ secrets.PASSWORD }}
         with:
           source: "/home/runner/work/Portfolio/Portfolio/build"
