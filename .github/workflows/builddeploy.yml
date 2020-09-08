@@ -31,4 +31,5 @@ jobs:
         with:
           source: "/home/runner/work/Portfolio/Portfolio/build"
           target: "/var/www/danielcordell.co.uk"
+          strip_components: 3
 
