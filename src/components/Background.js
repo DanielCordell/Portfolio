@@ -13,22 +13,32 @@ class Background extends React.Component {
 
   colourScheme = null;
 
+  MAX_HEIGHT = 1080;
+
   constructor(props) {
     super(props);
 
     this.colourScheme = props.colourSchemes[props.colourSchemeIndex];
 
     window.addEventListener('resize', this.windowResize);
-    this.state = { width: window.innerWidth, height: window.innerHeight };
+    const height = Math.min(window.innerHeight, this.MAX_HEIGHT);
+    const width = window.innerWidth / window.innerHeight * height;
+    this.state = { width, height };
 
     this.initCircles();
     this.interval = setInterval(this.draw, this.INTERVAL_MILLIS);
   }
 
   windowResize = () => {
-    if (this.canvasRef.current) 
-      this.setState({ width: window.innerWidth, height: window.innerHeight });
+    if (this.canvasRef.current)
+      this.setWindowWidthState();
   };
+
+  setWindowWidthState = () => {
+    const height = Math.min(window.innerHeight, this.MAX_HEIGHT);
+    const width = window.innerWidth / window.innerHeight * height;
+    this.setState({ width, height });
+  }
 
   componentDidUpdate() {
     this.draw();
