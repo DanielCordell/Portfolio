@@ -38,7 +38,7 @@ class FloatyButton extends React.Component {
   `;
   
   AnimatedButton = styled(Button)`
-    animation: ${props => !props.flyingin ? css`${this.floatAnimation} 3s ease-in-out infinite` : css`${this.flyInAnimation} 2.5s cubic-bezier(0,0,0.30,1)`} ;
+    animation: ${props => !props.flyingin ? css`${this.floatAnimation} 3s ease-in-out infinite` : css`${this.flyInAnimation} 1.5s cubic-bezier(.02,1.11,.91,1)`} ;
     box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.4);
     width: 16em;
     animation-play-state: ${props => props.hover && !props.stillmode ? "running" : "paused"};
