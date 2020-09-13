@@ -52,7 +52,7 @@ class Background extends React.Component {
     const count = this.getRandomBetween(4, 6);
     // Generate 4-8 random circles
     for (let i = 0; i < count; ++i) {
-      const radius = (this.getRandomBetween(5, 12)) * this.state.width / 150;
+      const radius = (this.getRandomBetween(50, 120));
       this.circles.push({
         radius: radius,
         x: this.getRandomBetween(radius, this.state.width - radius),
@@ -67,7 +67,7 @@ class Background extends React.Component {
     if (!this.canvasRef.current) return;
     const ctx = this.canvasRef.current.getContext('2d');
     ctx.clearRect(0, 0, this.state.width, this.state.height);
-    ctx.fillStyle = "#343a40";
+    ctx.fillStyle = "#25274d";
     ctx.fillRect(0, 0, this.state.width, this.state.height);
     // Update circles
     if (!this.props.stillMode) this.circles.forEach(circle => {
@@ -135,7 +135,7 @@ class Background extends React.Component {
     }
 
     ctx.beginPath();
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = "#2e9cca";
     ctx.moveTo(coords[0].x, coords[0].y);
     for (let i = 1; i < coords.length; ++i) {
       ctx.lineTo(coords[i].x, coords[i].y);

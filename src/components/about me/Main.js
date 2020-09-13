@@ -14,11 +14,9 @@ export default function Main(props) {
   return (
     <>
       <IntroBox text={buttonDetails[highlightedButtonIndex].text}/>
-      <div style={{marginTop: "3em"}}>
         {
           buttonDetails.map((it, i) => <FloatyButton key={i} style={it.style} text={it.text} stillMode={props.stillMode} setHighlightedButton={() => {setHighlightedButtonIndex(i)}} />)
         }
-      </div>
     </>
   );
 }

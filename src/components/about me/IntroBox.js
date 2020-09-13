@@ -16,15 +16,12 @@ class IntroBox extends React.Component {
     margin-top: 5vh;
     text-align: center;
     background-color: #ffffff00 !important;
-    -webkit-text-stroke-width: 2.5px;
-    -webkit-text-stroke-color: black;
     border: none !important;
   `;
 
   StyledImage = styled(Image).attrs(props => ({src: props.image, roundedCircle: true, fluid: true}))`
-    width: 8em;
+    width: 12em;
     margin-top: 1.25rem;
-    border: 5px solid #fff;
   `;
 
   render() {
